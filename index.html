@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Geological Strength Index Calculator</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:15px;
+    background:#f3f4f6;
+    font-family:Arial,sans-serif;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.card{
+    background:#fff;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:15px;
+    border:1px solid #ddd;
+}
+
+h1,h2,h3{
+    margin-top:0;
+}
+
+.gsi-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+}
+
+.gsi-table td,
+.gsi-table th{
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:center;
+}
+
+.structure{
+    text-align:left;
+    font-weight:bold;
+    width:180px;
+}
+
+.vg{background:#d8efd8;}
+.gd{background:#cfe8d1;}
+.fr{background:#f6efb2;}
+.pr{background:#f4d6d6;}
+.vp{background:#eedce8;}
+
+.cell{
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.cell:hover{
+    transform:scale(1.03);
+}
+
+.selected{
+    border:4px solid black !important;
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    box-sizing:border-box;
+}
+
+.big{
+    font-size:72px;
+    text-align:center;
+    font-weight:bold;
+    color:#9b111e;
+}
+
+.subtitle{
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+}
+
+.result-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.result-table td{
+    border:1px solid #ddd;
+    padding:10px;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    border-radius:8px;
+    background:#0f172a;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1e293b;
+}
+
+.classification{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.classification th,
+.classification td{
+    border:1px solid #ddd;
+    padding:10px;
+}
+
+.note{
+    background:#f8fafc;
+    border-left:5px solid #2563eb;
+    padding:15px;
+    margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+<h2>GSI - Rock Mass Structure & Surface Condition</h2>
+
+<p>
+Rows = Rock Mass Structure<br>
+Columns = Surface Condition<br>
+Klik salah satu sel.
+</p>
+
+<table class="gsi-table">
+
+<tr>
+<th>Structure ↓ Surface →</th>
+<th class="vg">Very Good</th>
+<th class="gd">Good</th>
+<th class="fr">Fair</th>
+<th class="pr">Poor</th>
+<th class="vp">Very Poor</th>
+</tr>
+
+<tr>
+<td class="structure">Intact / Massive</td>
+<td class="cell vg" onclick="pick(this,95,'Intact','Very Good')">95</td>
+<td class="cell gd" onclick="pick(this,85,'Intact','Good')">85</td>
+<td class="cell fr" onclick="pick(this,75,'Intact','Fair')">75</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+
+<tr>
+<td class="structure">Blocky</td>
+<td class="cell vg" onclick="pick(this,80,'Blocky','Very Good')">80</td>
+<td class="cell gd" onclick="pick(this,70,'Blocky','Good')">70</td>
+<td class="cell fr" onclick="pick(this,60,'Blocky','Fair')">60</td>
+<td class="cell pr" onclick="pick(this,50,'Blocky','Poor')">50</td>
+<td class="cell vp" onclick="pick(this,40,'Blocky','Very Poor')">40</td>
+</tr>
+
+<tr>
+<td class="structure">Very Blocky</td>
+<td class="cell vg" onclick="pick(this,70,'Very Blocky','Very Good')">70</td>
+<td class="cell gd" onclick="pick(this,60,'Very Blocky','Good')">60</td>
+<td class="cell fr" onclick="pick(this,50,'Very Blocky','Fair')">50</td>
+<td class="cell pr" onclick="pick(this,40,'Very Blocky','Poor')">40</td>
+<td class="cell vp" onclick="pick(this,30,'Very Blocky','Very Poor')">30</td>
+</tr>
+
+<tr>
+<td class="structure">Blocky Disturbed</td>
+<td class="cell vg" onclick="pick(this,55,'Blocky Disturbed','Very Good')">55</td>
+<td class="cell gd" onclick="pick(this,45,'Blocky Disturbed','Good')">45</td>
+<td class="cell fr" onclick="pick(this,35,'Blocky Disturbed','Fair')">35</td>
+<td class="cell pr" onclick="pick(this,25,'Blocky Disturbed','Poor')">25</td>
+<td class="cell vp" onclick="pick(this,15,'Blocky Disturbed','Very Poor')">15</td>
+</tr>
+
+<tr>
+<td class="structure">Disintegrated</td>
+<td>N/A</td>
+<td class="cell gd" onclick="pick(this,30,'Disintegrated','Good')">30</td>
+<td class="cell fr" onclick="pick(this,22,'Disintegrated','Fair')">22</td>
+<td class="cell pr" onclick="pick(this,15,'Disintegrated','Poor')">15</td>
+<td class="cell vp" onclick="pick(this,10,'Disintegrated','Very Poor')">10</td>
+</tr>
+
+<tr>
+<td class="structure">Laminated / Sheared</td>
+<td>N/A</td>
+<td>N/A</td>
+<td class="cell fr" onclick="pick(this,18,'Sheared','Fair')">18</td>
+<td class="cell pr" onclick="pick(this,13,'Sheared','Poor')">13</td>
+<td class="cell vp" onclick="pick(this,8,'Sheared','Very Poor')">8</td>
+</tr>
+
+</table>
+
+<h3 id="selectedText">
+Selected : None
+</h3>
+
+</div>
+
+
+<div class="card">
+
+<h3>Fine Tune GSI Manually</h3>
+
+<input type="number" id="manualGSI"
+placeholder="Contoh 65"
+oninput="calculate()">
+
+</div>
+
+<div class="card">
+
+<h3>Disturbance Factor (D)</h3>
+
+<input type="range"
+id="D"
+min="0"
+max="1"
+step="0.1"
+value="0.5"
+oninput="updateD()">
+
+<h2 id="Dlabel">0.5</h2>
+
+</div>
+
+<div class="card">
+
+<h3>Intact Rock Constant (MI)</h3>
+
+<select id="rockType" onchange="updateMI()">
+
+<option value="30">Dunit (30)</option>
+<option value="30">Harzburgit (30)</option>
+<option value="30">Lherzolit (30)</option>
+<option value="30">Wehrlit (30)</option>
+<option value="30">Websterit (30)</option>
+<option value="25">Serpentinit (25)</option>
+<option value="30">Peridotit (30)</option>
+<option value="27">Gabro (27)</option>
+<option value="18">Diabas/Dolerit (18)</option>
+<option value="28">Amfibolit (28)</option>
+<option value="17">Basalt (17)</option>
+<option value="19">Andesit (19)</option>
+<option value="33">Granit (33)</option>
+<option value="30">Granodiorit (30)</option>
+<option value="8">Slate (8)</option>
+<option value="8">Schist/Phyllite (8)</option>
+<option value="28">Gneiss (28)</option>
+<option value="22">Quartzite (22)</option>
+<option value="8">Siltstone/Mudstone (8)</option>
+<option value="10">Dolostone (10)</option>
+<option value="10">Limestone (10)</option>
+<option value="18">Sandstone (18)</option>
+<option value="27">Granodiorite/Diorite (27)</option>
+<option value="30">Granite (30)</option>
+
+</select>
+
+<br><br>
+
+<input id="miValue" value="30">
+
+</div>
+
+<div class="card">
+
+<h2>GSI Classification Table</h2>
+
+<table class="classification">
+<tr>
+<th>GSI Range</th>
+<th>Quality</th>
+</tr>
+
+<tr>
+<td>75 - 100</td>
+<td>Very Good</td>
+</tr>
+
+<tr>
+<td>55 - 75</td>
+<td>Good</td>
+</tr>
+
+<tr>
+<td>40 - 55</td>
+<td>Fair</td>
+</tr>
+
+<tr>
+<td>25 - 40</td>
+<td>Poor</td>
+</tr>
+
+<tr>
+<td>10 - 25</td>
+<td>Very Poor</td>
+</tr>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<h2>GSI Results</h2>
+
+<div class="big" id="gsiOutput">0</div>
+
+<div class="subtitle" id="quality">
+Waiting Input
+</div>
+
+<br>
+
+<table class="result-table">
+
+<tr>
+<td>GSI</td>
+<td id="resGSI">0</td>
+</tr>
+
+<tr>
+<td>mi</td>
+<td id="resMI">0</td>
+</tr>
+
+<tr>
+<td>mb</td>
+<td id="resMB">0</td>
+</tr>
+
+<tr>
+<td>s</td>
+<td id="resS">0</td>
+</tr>
+
+<tr>
+<td>a</td>
+<td id="resA">0</td>
+</tr>
+
+<tr>
+<td>σcm/σci</td>
+<td id="resOCM">0</td>
+</tr>
+
+<tr>
+<td>D</td>
+<td id="resD">0</td>
+</tr>
+
+</table>
+
+<div class="note" id="engNote">
+Engineering Note
+</div>
+
+<br>
+
+<button onclick="resetAll()">RESET</button>
+
+</div>
+
+</div>
+
+<script>
+
+let selectedGSI=0;
+
+function pick(el,gsi,structure,surface){
+
+document.querySelectorAll('.cell').forEach(
+x=>x.classList.remove('selected')
+);
+
+el.classList.add('selected');
+
+selectedGSI=gsi;
+
+document.getElementById("selectedText").innerHTML=
+"Selected : "+structure+" / "+surface+
+" → GSI ≈ "+gsi;
+
+calculate();
+}
+
+function updateMI(){
+document.getElementById("miValue").value=
+document.getElementById("rockType").value;
+
+calculate();
+}
+
+function updateD(){
+document.getElementById("Dlabel").innerHTML=
+document.getElementById("D").value;
+
+calculate();
+}
+
+function classify(gsi){
+
+if(gsi>=75) return "Very Good Rock Mass";
+if(gsi>=55) return "Good Rock Mass";
+if(gsi>=40) return "Fair Rock Mass";
+if(gsi>=25) return "Poor Rock Mass";
+
+return "Very Poor Rock Mass";
+}
+
+function note(gsi){
+
+if(gsi>=75)
+return "High strength rock mass. Tunnel often self supporting.";
+
+if(gsi>=55)
+return "Moderate support required. Rock bolts and shotcrete generally sufficient.";
+
+if(gsi>=40)
+return "Significant support recommended.";
+
+if(gsi>=25)
+return "Heavy support required. Monitoring recommended.";
+
+return "Very heavy support. Face support, grouting and forepoling may be required.";
+}
+
+function calculate(){
+
+let gsi=selectedGSI;
+
+let manual=document.getElementById("manualGSI").value;
+
+if(manual!=""){
+gsi=parseFloat(manual);
+}
+
+if(gsi<=0){
+return;
+}
+
+let D=
+parseFloat(document.getElementById("D").value);
+
+let mi=
+parseFloat(document.getElementById("miValue").value);
+
+let mb=
+mi*Math.exp(
+(gsi-100)/(28-14*D)
+);
+
+let s=
+Math.exp(
+(gsi-100)/(9-3*D)
+);
+
+let a=
+0.5+
+(1/6)*
+(
+Math.exp(-gsi/15)-
+Math.exp(-20/3)
+);
+
+let ocm=
+Math.pow(s,a);
+
+document.getElementById("gsiOutput").innerHTML=gsi;
+
+document.getElementById("quality").innerHTML=
+classify(gsi);
+
+document.getElementById("resGSI").innerHTML=
+gsi.toFixed(0);
+
+document.getElementById("resMI").innerHTML=
+mi.toFixed(2);
+
+document.getElementById("resMB").innerHTML=
+mb.toFixed(4);
+
+document.getElementById("resS").innerHTML=
+s.toFixed(6);
+
+document.getElementById("resA").innerHTML=
+a.toFixed(4);
+
+document.getElementById("resOCM").innerHTML=
+ocm.toFixed(6);
+
+document.getElementById("resD").innerHTML=
+D.toFixed(1);
+
+document.getElementById("engNote").innerHTML=
+note(gsi);
+
+}
+
+function resetAll(){
+
+location.reload();
+
+}
+
+updateMI();
+
+</script>
+
+</body>
+</html>
